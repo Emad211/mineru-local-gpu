@@ -1,3 +1,5 @@
+<div dir="rtl" align="right">
+
 # MinerU Local GPU
 
 استخراج محلی متن، فرمول، جدول و تصویر از PDF و اسناد Office با MinerU و GPU. هیچ API یا سرویس ابری لازم نیست.
@@ -11,9 +13,30 @@ MinerU برای هر سند در `output/<نام‌سند>/vlm/` این فایل
 - `<نام‌سند>_content_list_v2.json`: بلوک‌های ساختاریافته با مختصات
 - `<نام‌سند>_layout.pdf`: PDF همراه با تشخیص layout
 
-## اجرای سریع
+## نصب و دانلود مدل
 
-### ویندوز
+ابتدا محیط مجازی و MinerU را نصب کنید. برای اجرا روی GPU، نسخهٔ CUDAدار PyTorch باید با درایور NVIDIA شما سازگار باشد.
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+python -m pip install -U mineru
+```
+
+مدل‌ها را **یک‌بار** دانلود کنید. برای PDFهای ریاضی و محتوای پیچیده، مدل `vlm` لازم است:
+
+```powershell
+# ModelScope - انتخاب پیش‌فرض این پروژه
+.\.venv\Scripts\mineru-models-download.exe -s modelscope -m vlm
+
+# یا Hugging Face
+.\.venv\Scripts\mineru-models-download.exe -s huggingface -m vlm
+```
+
+برای دریافت همهٔ مدل‌ها (`pipeline` و `vlm`) از `-m all` استفاده کنید. دانلود اول ممکن است چند گیگابایت باشد؛ مدل‌ها در cache محلی ذخیره می‌شوند و در اجراهای بعدی دوباره دانلود نمی‌شوند.
+
+## اجرای سریع
 
 فایل PDF را روی [`extract-pdf.bat`](extract-pdf.bat) بکشید، یا در PowerShell اجرا کنید:
 
@@ -21,7 +44,7 @@ MinerU برای هر سند در `output/<نام‌سند>/vlm/` این فایل
 .\extract-pdf.bat "C:\path\to\document.pdf"
 ```
 
-خروجی در پوشه `output` قرار می‌گیرد. اسکریپت به‌طور پیش‌فرض از GPU (`cuda`) و مدل محلی `vlm-engine` استفاده می‌کند.
+خروجی در پوشهٔ `output` قرار می‌گیرد. اسکریپت به‌طور پیش‌فرض از GPU (`cuda`) و مدل محلی `vlm-engine` استفاده می‌کند.
 
 ## بهترین تنظیم برای هر نوع سند
 
@@ -53,7 +76,7 @@ $env:MINERU_TASK_RESULT_TIMEOUT_SECONDS = '43200' # 12 hours
 
 3. **خطای timeout:** MinerU به‌طور پیش‌فرض بعد از 3600 ثانیه منتظر نتیجه نمی‌ماند. این پروژه مقدار `MINERU_TASK_RESULT_TIMEOUT_SECONDS=43200` را تنظیم می‌کند. برای اسناد خیلی سنگین، آن را بیشتر کنید.
 4. **حافظهٔ GPU:** قبل از اجرا `nvidia-smi` را بررسی کنید و برنامه‌های GPU-محور دیگر را ببندید. 8GB VRAM در این نصب با `batch_size=4` اجرا می‌شود.
-5. **مدل:** اجرای اول مدل را دانلود و در cache محلی ذخیره می‌کند؛ اجراهای بعدی سریع‌تر شروع می‌شوند.
+5. **مدل:** اگر مدل را پیشاپیش دانلود نکرده باشید، MinerU در اجرای اول تلاش می‌کند آن را دانلود کند. دانلود دستی بخش قبل، اجرای اول را قابل‌پیش‌بینی‌تر می‌کند.
 
 ## MCP برای Codex / Claude Code
 
@@ -62,7 +85,7 @@ $env:MINERU_TASK_RESULT_TIMEOUT_SECONDS = '43200' # 12 hours
 - `mineru_info`: بررسی MinerU و CUDA
 - `extract_document`: تبدیل سند به Markdown، JSON و تصاویر
 
-نمونه تست اتصال:
+نمونهٔ تست اتصال:
 
 ```powershell
 .\.venv\Scripts\python.exe .\test_mcp_client.py
@@ -70,13 +93,7 @@ $env:MINERU_TASK_RESULT_TIMEOUT_SECONDS = '43200' # 12 hours
 
 سرور برای PDFهای سنگین، timeout داخلی MinerU را 12 ساعت و timeout فرایند را کمی بیشتر تنظیم می‌کند.
 
-## پیش‌نیازها
-
-- Windows + NVIDIA GPU با CUDA
-- Python virtual environment در `.venv`
-- MinerU نصب‌شده در همان virtual environment
-
-برای بررسی GPU:
+## بررسی GPU
 
 ```powershell
 nvidia-smi
@@ -91,3 +108,5 @@ mineru_mcp_server.py  سرور MCP محلی
 test_mcp_client.py    تست MCP
 output/               خروجی‌ها (در Git نادیده گرفته می‌شود)
 ```
+
+</div>
