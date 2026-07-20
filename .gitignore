@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+output/
+*.log
+*.pdf
+!test_sample.pdf
+.pytest_cache/
